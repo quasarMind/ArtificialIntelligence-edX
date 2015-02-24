@@ -165,7 +165,7 @@ class PriorityQueue:
       of an item.  However, you may insert the same item multiple times with
       different priorities.
     """
-    def  __init__(self):
+    def __init__(self):
         self.heap = []
         self.count = 0
 
@@ -202,9 +202,9 @@ class PriorityQueueWithFunction(PriorityQueue):
         PriorityQueue.push(self, item, self.priorityFunction(item))
 
 
-def manhattanDistance( xy1, xy2 ):
+def manhattanDistance(xy1, xy2):
     "Returns the Manhattan distance between points xy1 and xy2"
-    return abs( xy1[0] - xy2[0] ) + abs( xy1[1] - xy2[1] )
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
 """
   Data structures and functions useful for various course projects
