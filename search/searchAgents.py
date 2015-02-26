@@ -133,6 +133,7 @@ class SearchAgent(Agent):
         else:
             return Directions.STOP
 
+
 class PositionSearchProblem(search.SearchProblem):
     """
     A search problem defines the state space, start state, goal test, successor
@@ -144,7 +145,7 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
+    def __init__(self, gameState, costFn = lambda x: 1, goal=(1, 1), start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
 
@@ -154,7 +155,8 @@ class PositionSearchProblem(search.SearchProblem):
         """
         self.walls = gameState.getWalls()
         self.startState = gameState.getPacmanPosition()
-        if start != None: self.startState = start
+        if start is not None:
+            self.startState = start
         self.goal = goal
         self.costFn = costFn
         self.visualize = visualize
@@ -280,29 +282,28 @@ class CornersProblem(search.SearchProblem):
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
-        self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        self.corners = ((1, 1), (1, top), (right, 1), (right, top))
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print 'Warning: no food in corner ' + str(corner)
-        self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
+        self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        self.cornersLeft = [(1, 1), (1, top), (right, 1), (right, top)]
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startingPosition, self.cornersLeft
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return len(self.cornersLeft) == 0
 
     def getSuccessors(self, state):
         """
@@ -321,12 +322,19 @@ class CornersProblem(search.SearchProblem):
             # Here's a code snippet for figuring out whether a new position hits a wall:
             #   x,y = currentPosition
             #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-
-            "*** YOUR CODE HERE ***"
-
-        self._expanded += 1 # DO NOT CHANGE
+            #   next_x, next_y = int(x + dx), int(y + dy)
+            #   hits_wall = self.walls[next_x][next_y]
+            x, y = state[0][0], state[0][1]
+            dx, dy = Actions.directionToVector(action)
+            next_x, next_y = int(x + dx), int(y + dy)
+            hits_wall = self.walls[next_x][next_y]
+            corner_state = state[1]
+            if (x, y) in corner_state:
+                corner_state.remove((x, y))
+            if not hits_wall:
+                successors.append((((next_x, next_y), corner_state), action, self.getCostOfActions([action])))
+        self._expanded += 1  # DO NOT CHANGE
+        print successors
         return successors
 
     def getCostOfActions(self, actions):
@@ -334,8 +342,9 @@ class CornersProblem(search.SearchProblem):
         Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999.  This is implemented for you.
         """
-        if actions == None: return 999999
-        x,y= self.startingPosition
+        if actions is None:
+            return 999999
+        x, y = self.startingPosition
         for action in actions:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
