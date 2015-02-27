@@ -112,6 +112,7 @@ def breadthFirstSearch(problem):
             return path
         if not node in closed:
             closed.append(node)
+            print "BugBusters", "::", fringe, ": Done", len(fringe) != 0
             for child in problem.getSuccessors(node):
                 fringe = fringe + [child[0]]
                 routes = routes + [path + [child[1]]]
