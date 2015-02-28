@@ -383,6 +383,7 @@ class AStarCornersAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
         self.searchType = CornersProblem
 
+
 class FoodSearchProblem:
     """
     A search problem associated with finding the a path that collects all of the
@@ -433,11 +434,13 @@ class FoodSearchProblem:
             cost += 1
         return cost
 
+
 class AStarFoodSearchAgent(SearchAgent):
-    "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
+    """ A SearchAgent for FoodSearchProblem using A* and your foodHeuristic """
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
+
 
 def foodHeuristic(state, problem):
     """
@@ -452,8 +455,8 @@ def foodHeuristic(state, problem):
     other hand, inadmissible or inconsistent heuristics may find optimal
     solutions, so be careful.
 
-    The state is a tuple ( pacmanPosition, foodGrid ) where foodGrid is a Grid
-    (see game.py) of either True or False. You can call foodGrid.asList() to get
+    The state is a tuple ( pacmanPosition, food_grid ) where food_grid is a Grid
+    (see game.py) of either True or False. You can call food_grid.asList() to get
     a list of food coordinates instead.
 
     If you want access to info like walls, capsules, etc., you can query the
@@ -467,17 +470,23 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    position, food_grid = state
+    x, y = position
+    net_cost = 0
+    for x_pos in range(food_grid.width):
+        for y_pos in range(food_grid.height):
+            if food_grid[x_pos][y_pos]:
+                net_cost += 1
+    return net_cost
+
 
 class ClosestDotSearchAgent(SearchAgent):
-    "Search for all food using a sequence of searches"
+    """Search for all food using a sequence of searches"""
     def registerInitialState(self, state):
         self.actions = []
         currentState = state
-        while(currentState.getFood().count() > 0):
-            nextPathSegment = self.findPathToClosestDot(currentState) # The missing piece
+        while currentState.getFood().count() > 0:
+            nextPathSegment = self.findPathToClosestDot(currentState)  # The missing piece
             self.actions += nextPathSegment
             for action in nextPathSegment:
                 legal = currentState.getLegalActions()
@@ -494,13 +503,22 @@ class ClosestDotSearchAgent(SearchAgent):
         gameState.
         """
         # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+        closed = []
+        fringe = [problem.getStartState()]
+        routes = [[]]
+        while len(fringe) != 0:
+            node, path = fringe[0], routes[0]
+            fringe, routes = fringe[1:], routes[1:]
+            if problem.isGoalState(node):
+                return path
+            if not node in closed:
+                closed.append(node)
+                for child in problem.getSuccessors(node):
+                    fringe = fringe + [child[0]]
+                    routes = routes + [path + [child[1]]]
+        return []
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -518,7 +536,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     """
 
     def __init__(self, gameState):
-        "Stores information from the gameState.  You don't need to change this."
+        """Stores information from the gameState.  You don't need to change this."""
         # Store the food for later reference
         self.food = gameState.getFood()
 
@@ -533,10 +551,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
+        x, y = state
+        return self.food[x][y]
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
 def mazeDistance(point1, point2, gameState):
     """
