@@ -104,10 +104,8 @@ def breadthFirstSearch(problem):
     fringe = [problem.getStartState()]
     routes = [[]]
     while len(fringe) != 0:
-        node = fringe[0]
-        path = routes[0]
-        fringe = fringe[1:]
-        routes = routes[1:]
+        node, path = fringe[0], routes[0]
+        fringe, routes = fringe[1:], routes[1:]
         if problem.isGoalState(node):
             return path
         if not node in closed:

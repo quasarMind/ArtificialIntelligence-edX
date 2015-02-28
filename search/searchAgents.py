@@ -329,7 +329,7 @@ class CornersProblem(search.SearchProblem):
             next_x, next_y = int(x + dx), int(y + dy)
             next_corners = []
             for (cx, cy) in corners:
-                if not (x, y) == (cx, cy):
+                if not (next_x, next_y) == (cx, cy):
                     next_corners.append((cx, cy))
             if not self.walls[next_x][next_y]:
                 next_state = (next_x, next_y, next_corners)
@@ -366,12 +366,11 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
+    corners = problem.corners # These are the corner coordinates
+    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    x, y = state[0]
-    # Finding the manhattan distance to the corners
-    return 0  # Default to trivial solution
+    "*** YOUR CODE HERE ***"
+    return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
