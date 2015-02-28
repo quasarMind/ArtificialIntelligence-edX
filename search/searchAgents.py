@@ -472,12 +472,14 @@ def foodHeuristic(state, problem):
     """
     position, food_grid = state
     x, y = position
-    net_cost = 0
+    problem.heuristicInfo['foodDistances'] = []
     for x_pos in range(food_grid.width):
         for y_pos in range(food_grid.height):
             if food_grid[x_pos][y_pos]:
-                net_cost += 1
-    return net_cost
+                problem.heuristicInfo['foodDistances'].append((abs(int(x - x_pos) + int(y - y_pos))))
+    if not problem.heuristicInfo['foodDistances']:
+        return 0
+    return max(problem.heuristicInfo['foodDistances'])
 
 
 class ClosestDotSearchAgent(SearchAgent):
