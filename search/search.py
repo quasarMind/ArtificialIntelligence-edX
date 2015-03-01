@@ -70,7 +70,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -78,26 +79,62 @@ def depthFirstSearch(problem):
 
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = []
+    fringe = [problem.getStartState()]
+    routes = [[]]
+    while len(fringe) != 0:
+        node = fringe[0]
+        path = routes[0]
+        fringe = fringe[1:]
+        routes = routes[1:]
+        if problem.isGoalState(node):
+            return path
+        if not node in closed:
+            closed.append(node)
+            for child in problem.getSuccessors(node):
+                fringe = [child[0]] + fringe
+                routes = [path + [child[1]]] + routes
+    return []
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = []
+    fringe = [problem.getStartState()]
+    routes = [[]]
+    while len(fringe) != 0:
+        node, path = fringe[0], routes[0]
+        fringe, routes = fringe[1:], routes[1:]
+        if problem.isGoalState(node):
+            return path
+        if not node in closed:
+            closed.append(node)
+            for child in problem.getSuccessors(node):
+                fringe = fringe + [child[0]]
+                routes = routes + [path + [child[1]]]
+    return []
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = []
+    fringe, routes, costs = util.PriorityQueue(), util.PriorityQueue(), util.PriorityQueue()
+    fringe.push(problem.getStartState(), 0)
+    routes.push([], 0)
+    costs.push(0, 0)
+    while not fringe.isEmpty():
+        node, path, cost = fringe.pop(), routes.pop(), costs.pop()
+        if problem.isGoalState(node):
+            return path
+        if not node in closed:
+            closed.append(node)
+            for child in problem.getSuccessors(node):
+                costs.push(cost + child[2], cost + child[2])
+                fringe.push(child[0], cost + child[2])
+                routes.push(path + [child[1]], cost + child[2])
+    return []
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -106,10 +143,25 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = []
+    fringe, routes, costs = util.PriorityQueue(), util.PriorityQueue(), util.PriorityQueue()
+    fringe.push(problem.getStartState(), 0 + heuristic(problem.getStartState(), problem))
+    routes.push([], 0 + heuristic(problem.getStartState(), problem))
+    costs.push(0, 0 + heuristic(problem.getStartState(), problem))
+    while not fringe.isEmpty():
+        node, path, cost = fringe.pop(), routes.pop(), costs.pop()
+        if problem.isGoalState(node):
+            return path
+        if not node in closed:
+            closed.append(node)
+            for child in problem.getSuccessors(node):
+                costs.push(cost + child[2], cost + child[2] + heuristic(child[0], problem))
+                fringe.push(child[0], cost + child[2] + heuristic(child[0], problem))
+                routes.push(path + [child[1]], cost + child[2] + heuristic(child[0], problem))
+    return []
 
 
 # Abbreviations

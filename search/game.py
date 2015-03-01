@@ -53,19 +53,20 @@ class Directions:
     WEST = 'West'
     STOP = 'Stop'
 
-    LEFT =       {NORTH: WEST,
-                   SOUTH: EAST,
-                   EAST:  NORTH,
-                   WEST:  SOUTH,
-                   STOP:  STOP}
+    LEFT = {NORTH: WEST,
+            SOUTH: EAST,
+            EAST:  NORTH,
+            WEST:  SOUTH,
+            STOP:  STOP}
 
-    RIGHT =      dict([(y,x) for x, y in LEFT.items()])
+    RIGHT = dict([(y, x) for x, y in LEFT.items()])
 
     REVERSE = {NORTH: SOUTH,
                SOUTH: NORTH,
                EAST: WEST,
                WEST: EAST,
                STOP: STOP}
+
 
 class Configuration:
     """
@@ -117,12 +118,13 @@ class Configuration:
             direction = self.direction # There is no stop direction
         return Configuration((x + dx, y+dy), direction)
 
+
 class AgentState:
     """
     AgentStates hold the state of an agent (configuration, speed, scared, etc).
     """
 
-    def __init__( self, startConfiguration, isPacman ):
+    def __init__(self, startConfiguration, isPacman):
         self.start = startConfiguration
         self.configuration = startConfiguration
         self.isPacman = isPacman
@@ -130,13 +132,13 @@ class AgentState:
         self.numCarrying = 0
         self.numReturned = 0
 
-    def __str__( self ):
+    def __str__(self):
         if self.isPacman:
-            return "Pacman: " + str( self.configuration )
+            return "Pacman: " + str(self.configuration)
         else:
-            return "Ghost: " + str( self.configuration )
+            return "Ghost: " + str(self.configuration)
 
-    def __eq__( self, other ):
+    def __eq__(self, other):
         if other == None:
             return False
         return self.configuration == other.configuration and self.scaredTimer == other.scaredTimer
@@ -158,6 +160,7 @@ class AgentState:
 
     def getDirection(self):
         return self.configuration.getDirection()
+
 
 class Grid:
     """
@@ -189,7 +192,8 @@ class Grid:
         return '\n'.join([''.join(x) for x in out])
 
     def __eq__(self, other):
-        if other == None: return False
+        if other is None:
+            return False
         return self.data == other.data
 
     def __hash__(self):
@@ -216,14 +220,14 @@ class Grid:
         g.data = self.data
         return g
 
-    def count(self, item =True ):
+    def count(self, item=True):
         return sum([x.count(item) for x in self.data])
 
-    def asList(self, key = True):
+    def asList(self, key=True):
         list = []
         for x in range(self.width):
             for y in range(self.height):
-                if self[x][y] == key: list.append( (x,y) )
+                if self[x][y] == key: list.append((x, y))
         return list
 
     def packBits(self):
